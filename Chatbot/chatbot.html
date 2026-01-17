@@ -1,0 +1,607 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safalta Sarathi Career Assistant</title>
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            --primary-blue: #0056b3; /* Safalta Sarathi Blue */
+            --light-blue: #e3f2fd;
+            --dark-grey: #333333;
+            --medium-grey: #666666;
+            --light-grey: #f4f4f9;
+            --white: #ffffff;
+            --chat-bubble-bot: #f1f0f0;
+            --chat-bubble-user: #0056b3;
+            --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--light-grey);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* --- CHAT CONTAINER --- */
+        .chat-widget {
+            width: 100%;
+            max-width: 500px;
+            height: 80vh; /* Takes up 80% of screen height */
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        /* --- HEADER --- */
+        .chat-header {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .bot-avatar {
+            width: 35px;
+            height: 35px;
+            background-color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-blue);
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        /* --- CHAT BODY (Messages) --- */
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scroll-behavior: smooth;
+        }
+
+        /* Message Bubbles */
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bot-msg {
+            background-color: var(--chat-bubble-bot);
+            color: var(--dark-grey);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .user-msg {
+            background-color: var(--chat-bubble-user);
+            color: var(--white);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        /* --- INTERACTION AREA (Checkboxes) --- */
+        .interaction-area {
+            background-color: var(--white);
+            border-top: 1px solid #eee;
+            padding: 15px 20px;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .checkbox-item:hover {
+            background-color: var(--light-blue);
+        }
+
+        .checkbox-item input {
+            margin-top: 4px;
+            cursor: pointer;
+            accent-color: var(--primary-blue);
+            transform: scale(1.2);
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--dark-grey);
+        }
+
+        /* --- BUTTONS --- */
+        .action-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: #004494;
+        }
+
+        .action-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .reset-btn {
+            background-color: var(--dark-grey);
+            margin-top: 10px;
+        }
+
+        /* --- RESULT CARD STYLING --- */
+        .result-card {
+            background: #fff;
+            border: 1px solid var(--primary-blue);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        .result-title {
+            color: var(--primary-blue);
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        .result-salary {
+            font-weight: bold;
+            color: #28a745;
+            margin: 5px 0;
+        }
+        .result-reality {
+            font-style: italic;
+            color: var(--medium-grey);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            background: #f9f9f9;
+            padding: 8px;
+            border-left: 3px solid #ffc107;
+        }
+        
+        /* Loading Dots */
+        .typing-indicator {
+            display: inline-block;
+            width: 40px;
+            height: 10px;
+        }
+        .typing-indicator span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #aaa;
+            border-radius: 50%;
+            animation: typing 1s infinite;
+            margin-right: 3px;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="chat-widget">
+    <div class="chat-header">
+        <div class="bot-avatar">SS</div>
+        <div>
+            <h2>Safalta Sarathi Assistant</h2>
+            <div style="font-size: 0.75rem; opacity: 0.9;">Career Guidance Bot</div>
+        </div>
+    </div>
+
+    <div class="chat-body" id="chatBody">
+        </div>
+
+    <div class="interaction-area" id="inputArea">
+        </div>
+</div>
+
+<script>
+    /* --- DATA FROM PDF --- */
+    const careerTracks = [
+        {
+            id: 1,
+            title: "Track 1: Tech & Digital",
+            subtitle: "(Software, IT, Data, AI, Coding)",
+            salary: "3L - 6L",
+            reality: "The learning never stops. You will spend hours debugging code. If you stop studying for 6 months, you become outdated.",
+            questions: [
+                "I love solving logical puzzles and finding errors.",
+                "I am comfortable sitting in front of a laptop screen for 8-10 hours a day.",
+                "When I don't know an answer, my first instinct is to Google it immediately.",
+                "I prefer working with machines, code, and data rather than managing people."
+            ]
+        },
+        {
+            id: 2,
+            title: "Track 2: Sales & Business",
+            subtitle: "(BDE, Corporate Sales, Retail)",
+            salary: "2.5L - 5L (+ Incentives)",
+            reality: "You will face rejection 10 times a day. High pressure, but the fastest way to earn big money without a tech degree.",
+            questions: [
+                "I have high energy and find it easy to talk to strangers.",
+                "I am money-motivated and get excited by 'Incentives' and 'Bonuses'.",
+                "I have thick skin—I don't get sad or offended if someone says 'No' to me.",
+                "I hate the idea of sitting quietly at a desk all day; I want action."
+            ]
+        },
+        {
+            id: 3,
+            title: "Track 3: Marketing & Content",
+            subtitle: "(Digital Marketing, Social Media, Design)",
+            salary: "2.5L - 4.5L",
+            reality: "It is not just 'posting reels.' It involves data analysis, constant deadlines, and high creativity on demand.",
+            questions: [
+                "I spend a lot of time on social media observing trends, ads, and viral content.",
+                "I have a good eye for design, colors, visuals, or storytelling.",
+                "I enjoy experimenting with tools like Canva, AI (ChatGPT), or Video Editors.",
+                "I get bored easily by repetitive data entry or strict rules."
+            ]
+        },
+        {
+            id: 4,
+            title: "Track 4: Finance & Banking",
+            subtitle: "(Accounts, Audit, Banking Ops)",
+            salary: "3L - 5L",
+            reality: "Accuracy is 100% required. One small mistake can cause big financial issues. Stable but repetitive.",
+            questions: [
+                "I am good with numbers, calculations, and spotting errors.",
+                "I hate chaos; I like organizing things and making sure processes run smoothly.",
+                "I like following clear rules, regulations, and structured processes.",
+                "I enjoy working with Excel sheets, balances, and reports."
+            ]
+        },
+        {
+            id: 5,
+            title: "Track 5: Healthcare & Pharma",
+            subtitle: "(Pharma Sales, Medical Coding)",
+            salary: "2.5L - 5L",
+            reality: "Sales involves travel/doctor visits. Ops requires strict adherence to medical laws and long hours of focus.",
+            questions: [
+                "I have a science background and understand basic medical terminology.",
+                "I want a meaningful career that contributes to patient health.",
+                "I have a sharp memory for difficult names (medicines/procedures).",
+                "I am disciplined about following hygiene, safety, and compliance rules."
+            ]
+        },
+        {
+            id: 6,
+            title: "Track 6: Operations & Logistics",
+            subtitle: "(Supply Chain, Warehouse, Backend)",
+            salary: "3L - 5L",
+            reality: "High responsibility. If a delivery is late or stock is missing, it is your problem to solve immediately.",
+            questions: [
+                "I am disciplined, organized, and very detail-oriented.",
+                "I am good at planning, scheduling, and coordinating between people.",
+                "I stay calm in stressful situations when things go wrong.",
+                "I prefer 'executing' tasks behind the scenes rather than selling upfront."
+            ]
+        },
+        {
+            id: 7,
+            title: "Track 7: Customer Support",
+            subtitle: "(BPO, Client Success)",
+            salary: "2L - 4L",
+            reality: "You must follow a script. Work is repetitive. Best place to build communication skills for 1-2 years.",
+            questions: [
+                "I am patient and polite, even when the other person is angry.",
+                "I want to start earning quickly while I figure out my long-term plan.",
+                "I have decent English speaking or typing skills.",
+                "I can handle complaints without taking them personally."
+            ]
+        },
+        {
+            id: 8,
+            title: "Track 8: Core Engineering",
+            subtitle: "(Civil, Mechanical, Electrical)",
+            salary: "3L - 5L",
+            reality: "Entry-level jobs often involve heat, dust, and hard labor. It is not an AC office job.",
+            questions: [
+                "I like getting my hands dirty and working in the real physical world.",
+                "I want to work in the specific technical field I studied for.",
+                "I understand how physical systems, machines, or structures work.",
+                "I am willing to work in non-metro locations, sites, or factory floors."
+            ]
+        }
+    ];
+
+    /* --- LOGIC VARIABLES --- */
+    let currentStep = -1; // -1: Intro, 0-7: Tracks, 8: Result
+    let userScores = new Array(careerTracks.length).fill(0);
+    const chatBody = document.getElementById('chatBody');
+    const inputArea = document.getElementById('inputArea');
+
+    /* --- FUNCTIONS --- */
+
+    function scrollToBottom() {
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // Add a message to the chat
+    function addMessage(text, type, isHtml = false) {
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message');
+        msgDiv.classList.add(type === 'bot' ? 'bot-msg' : 'user-msg');
+        
+        if (isHtml) {
+            msgDiv.innerHTML = text;
+        } else {
+            msgDiv.innerText = text;
+        }
+        
+        chatBody.appendChild(msgDiv);
+        scrollToBottom();
+    }
+
+    // Simulate Bot Typing
+    function showTyping() {
+        const id = 'typing-' + Date.now();
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message', 'bot-msg');
+        msgDiv.id = id;
+        msgDiv.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+        chatBody.appendChild(msgDiv);
+        scrollToBottom();
+        return id;
+    }
+
+    function removeTyping(id) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    }
+
+    // Initialize Chat
+    function startChat() {
+        const typingId = showTyping();
+        setTimeout(() => {
+            removeTyping(typingId);
+            addMessage("Hello! I am the Safalta Sarathi Career Assistant. 🎓", 'bot');
+            
+            setTimeout(() => {
+                addMessage("I'm here to help you find your ideal career path using our 30-Day Career Reset Matrix.", 'bot');
+                setTimeout(() => {
+                    addMessage("I will show you different career tracks. Check the boxes that are <b>TRUE</b> for you. Ready?", 'bot', true);
+                    renderStartButton();
+                }, 800);
+            }, 800);
+        }, 1000);
+    }
+
+    function renderStartButton() {
+        inputArea.innerHTML = `<button class="action-btn" onclick="nextStep()">Yes, Let's Start!</button>`;
+    }
+
+    // Core Logic Loop
+    function nextStep() {
+        currentStep++;
+
+        if (currentStep < careerTracks.length) {
+            // We are quizzing a specific track
+            askTrackQuestions(currentStep);
+        } else {
+            // We are done
+            showResults();
+        }
+    }
+
+    function askTrackQuestions(index) {
+        const track = careerTracks[index];
+        
+        // Bot speaks
+        const typingId = showTyping();
+        inputArea.innerHTML = ''; // Clear inputs while typing
+
+        setTimeout(() => {
+            removeTyping(typingId);
+            addMessage(`Let's look at <b>${track.title}</b>.`, 'bot', true);
+            
+            setTimeout(() => {
+                addMessage(`Tick the statements below that describe you:`, 'bot');
+                renderCheckboxes(index);
+            }, 500);
+        }, 800);
+    }
+
+    function renderCheckboxes(trackIndex) {
+        const track = careerTracks[trackIndex];
+        let html = `<div class="checkbox-group">`;
+        
+        track.questions.forEach((q, qIndex) => {
+            html += `
+                <div class="checkbox-item" onclick="toggleCheckbox('q-${qIndex}')">
+                    <input type="checkbox" id="q-${qIndex}" value="1">
+                    <label for="q-${qIndex}">${q}</label>
+                </div>
+            `;
+        });
+        
+        html += `</div>`;
+        html += `<button class="action-btn" onclick="submitAnswers(${trackIndex})">Next Section ➔</button>`;
+        
+        inputArea.innerHTML = html;
+    }
+
+    // Helper for easier clicking (click text to check box)
+    window.toggleCheckbox = function(id) {
+        const checkbox = document.getElementById(id);
+        // We let the default click handle the check, this is just for container click support if needed
+        // but the label tag handles text clicks natively.
+    };
+
+    window.submitAnswers = function(trackIndex) {
+        // Calculate score for this track
+        const checkboxes = inputArea.querySelectorAll('input[type="checkbox"]:checked');
+        const score = checkboxes.length;
+        userScores[trackIndex] = score;
+
+        // User feedback bubble
+        let userResponseText = score === 0 ? "None of these match me." : 
+                               score === 1 ? "1 tick." : 
+                               `${score} ticks.`;
+        addMessage(userResponseText, 'user');
+
+        // Move to next
+        nextStep();
+    };
+
+    function showResults() {
+        const typingId = showTyping();
+        inputArea.innerHTML = ''; // clear buttons
+
+        setTimeout(() => {
+            removeTyping(typingId);
+            addMessage("Analysis complete! Calculating your results... 📊", 'bot');
+
+            setTimeout(() => {
+                // Find Logic: Any track with >= 3 ticks is a match
+                // If multiple matches, show highest. If no >=3, show highest available.
+                
+                const matches = [];
+                let maxScore = -1;
+
+                userScores.forEach((score, index) => {
+                    if (score > maxScore) maxScore = score;
+                });
+
+                // Threshold logic from PDF: "If you tick 3 or more boxes... strong match"
+                // We will display all tracks that have the MAX score, provided max score is > 0.
+                
+                careerTracks.forEach((track, index) => {
+                    if (userScores[index] === maxScore && maxScore > 0) {
+                        matches.push(track);
+                    }
+                });
+
+                if (matches.length === 0) {
+                    addMessage("It seems you didn't connect strongly with any specific track. You might want to explore the tracks again or consult a mentor directly.", 'bot');
+                } else {
+                    addMessage(`Based on your responses, here is your ideal career path (Score: ${maxScore}/4):`, 'bot');
+                    
+                    matches.forEach(match => {
+                        const resultHTML = `
+                            <div class="result-card">
+                                <div class="result-title">${match.title}</div>
+                                <div style="font-size:0.9rem; color:#555;">${match.subtitle}</div>
+                                <div class="result-salary">💰 Est. Salary: ${match.salary}</div>
+                                <div class="result-reality">
+                                    <b>⚠️ Reality Check:</b> ${match.reality}
+                                </div>
+                            </div>
+                        `;
+                        addMessage(resultHTML, 'bot', true);
+                    });
+                }
+                
+                // Restart Button
+                inputArea.innerHTML = `<button class="action-btn reset-btn" onclick="location.reload()">Start Over ⟳</button>`;
+
+            }, 1500);
+        }, 1000);
+    }
+
+    // Start on load
+    startChat();
+
+</script>
+
+</body>
+</html>-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safalta Sarathi Career Assistant</title>
+
+    <!-- CSS FILE -->
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+<body>
+<div class="chat-toggle" id="chatToggle">💬
+        <span class="chat-tooltip">Career Guidance Chat</span>
+
+</div>
+
+<div class="chat-widget hidden" id="chatWidget">
+    <div class="chat-header">
+        <div class="bot-avatar">SS</div>
+        <div>
+            <h2>Safalta Sarathi Assistant</h2>
+            <div style="font-size: 0.75rem; opacity: 0.9;">Career Guidance Bot</div>
+        </div>
+            <span class="close-btn" id="closeChat">✖</span>
+
+    </div>
+
+    <div class="chat-body" id="chatBody"></div>
+
+    <div class="interaction-area" id="inputArea"></div>
+</div>
+
+<!-- JS FILE -->
+<script src="chatbot.js"></script>
+</body>
+</html>
