@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safalta Sarathi Career Assistant</title>
+    <link rel="stylesheet" href="final.css">
+</head>
+<body>
+
+    <!-- 1. FLOATING BUTTON -->
+    <button class="ss-chat-toggle" onclick="toggleSafaltaBot()">
+        <svg viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+        </svg>
+        <span>Career Assistant</span>
+    </button>
+
+    <!-- 2. OFF-CANVAS STRUCTURE -->
+    <div class="ss-backdrop" id="ssBackdrop" onclick="toggleSafaltaBot()"></div>
+
+    <div class="ss-sidebar" id="ssSidebar">
+        <!-- Header -->
+        <div class="ss-header">
+            <div class="ss-header-title">
+                <h3>Safalta Sarathi</h3>
+                <span>30-Day Career Reset</span>
+            </div>
+            <button class="ss-close-btn" onclick="toggleSafaltaBot()">×</button>
+        </div>
+
+        <!-- VIEW 1: Chat History -->
+        <div class="ss-chat-body" id="ssChatBody">
+            <!-- Messages injected via JS -->
+        </div>
+
+        <!-- VIEW 2: Full Page Checklist (Initially Hidden) -->
+        <div class="ss-checklist-page" id="ssChecklistPage">
+             <div class="ss-checklist-header">Select all that apply to you:</div>
+             <div id="ssChecklistItems"></div>
+        </div>
+
+        <!-- Footer (Buttons) -->
+        <div class="ss-footer" id="ssFooter">
+            <!-- Start Button -->
+            <button class="ss-btn ss-btn-primary" id="ssStartBtn" onclick="startQuestionnaire()" style="display:none;">Let's Start 🚀</button>
+
+            <!-- Submit Button -->
+            <button class="ss-btn ss-btn-primary" id="ssSubmitBtn" onclick="calculateCareerPath()" style="display:none;">Find My Path ➔</button>
+            
+            <!-- Reset Button -->
+            <button class="ss-btn ss-btn-reset" id="ssResetBtn" onclick="resetSafaltaBot()" style="display:none;">Start Over ⟳</button>
+        </div>
+    </div>
+
+    <script  src="final.js">
+        
+    </script>
+</body>
+</html>

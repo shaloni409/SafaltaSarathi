@@ -1,0 +1,328 @@
+        :root {
+            /* Safalta Sarathi Palette */
+            --primary-blue: #0056b3;  /* Main Brand Color */
+            --dark-blue: #004494;     /* Hover states */
+            --light-blue-bg: #eef4fb; /* Chat bubbles, backgrounds */
+            --white: #ffffff;
+            --black: #1a1a1a;
+            --grey-text: #555555;
+            --grey-border: #dddddd;
+            --panel-width: 400px;
+            --shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5; /* Just for demo page */
+        }
+
+        /* --- 1. FLOATING TOGGLE BUTTON --- */
+        .ss-chat-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            padding: 16px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 9998;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .ss-chat-toggle:hover {
+            transform: translateY(-2px);
+            background-color: var(--dark-blue);
+        }
+
+        .ss-chat-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        /* --- 2. BACKDROP OVERLAY --- */
+        .ss-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        .ss-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- 3. OFF-CANVAS SIDEBAR --- */
+        .ss-sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: var(--panel-width);
+            height: 100vh;
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ss-sidebar.active {
+            transform: translateX(0);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 450px) {
+            .ss-sidebar {
+                width: 100%;
+            }
+            .ss-chat-toggle {
+                bottom: 15px;
+                right: 15px;
+                padding: 12px 20px;
+            }
+        }
+
+        /* --- SIDEBAR HEADER --- */
+        .ss-header {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0; /* Prevent header from shrinking */
+        }
+
+        .ss-header-title h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .ss-header-title span {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .ss-close-btn {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0 5px;
+            line-height: 1;
+        }
+
+        /* --- CHAT AREA (Scrollable) --- */
+        .ss-chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .ss-msg {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            animation: slideUp 0.3s ease;
+            position: relative;
+        }
+
+        .ss-msg-bot {
+            background-color: var(--white);
+            color: var(--black);
+            border: 1px solid var(--grey-border);
+            align-self: flex-start;
+            border-top-left-radius: 2px;
+        }
+
+        .ss-msg-user {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            align-self: flex-end;
+            border-top-right-radius: 2px;
+        }
+
+        /* --- FULL PAGE CHECKLIST (Hidden by default) --- */
+        .ss-checklist-page {
+            flex: 1; /* Takes up same space as chat body */
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #fff;
+            display: none; /* Hidden initially */
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .ss-checklist-header {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--black);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-blue-bg);
+        }
+
+        .ss-checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px; /* Larger touch area */
+            border: 1px solid #eee;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ss-checkbox-item:hover {
+            background-color: #f7faff;
+            border-color: #cbdcf3;
+        }
+
+        /* NEW SELECTED STATE */
+        .ss-checkbox-item.selected {
+            background-color: var(--light-blue-bg);
+            border-color: var(--primary-blue);
+            box-shadow: inset 0 0 0 1px var(--primary-blue); /* Thicker border effect */
+        }
+
+        .ss-checkbox-item input {
+            margin-top: 4px;
+            transform: scale(1.3); /* Bigger checkbox */
+            cursor: pointer;
+            accent-color: var(--primary-blue);
+        }
+
+        .ss-checkbox-item label {
+            font-size: 14px; /* Bigger font */
+            color: var(--black);
+            cursor: pointer;
+            line-height: 1.5;
+            width: 100%;
+            /* Make label transparent to clicks so the parent DIV handles the click logic */
+            pointer-events: none; 
+        }
+
+        /* --- TYPING ANIMATION --- */
+        .ss-typing-dots {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 0;
+            min-height: 10px;
+        }
+
+        .ss-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #90949c;
+            border-radius: 50%;
+            animation: ssBounce 1.4s infinite ease-in-out both;
+        }
+
+        .ss-dot:nth-child(1) { animation-delay: -0.32s; }
+        .ss-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes ssBounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* --- FOOTER (Buttons Only) --- */
+        .ss-footer {
+            background: var(--white);
+            border-top: 1px solid var(--grey-border);
+            padding: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Buttons */
+        .ss-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: center;
+        }
+
+        .ss-btn-primary {
+            background-color: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .ss-btn-primary:hover {
+            background-color: var(--dark-blue);
+        }
+
+        .ss-btn-reset {
+            background-color: var(--black);
+            color: var(--white);
+            margin-top: 5px;
+        }
+
+        /* --- RESULT CARD --- */
+        .ss-result-card {
+            background-color: var(--light-blue-bg);
+            border: 2px solid var(--primary-blue);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 5px;
+        }
+
+        .ss-result-header {
+            color: var(--primary-blue);
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .ss-result-details {
+            font-size: 13px;
+            color: var(--grey-text);
+            line-height: 1.6;
+        }
+        
+        .ss-result-details strong {
+            color: var(--black);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
